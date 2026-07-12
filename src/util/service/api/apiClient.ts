@@ -115,9 +115,9 @@ export class ApiClient {
 //   return this.request<T>("GET", url, undefined, options);
 // }
 
-get<T>(url: string) {
-  return this.request<T>("GET", url, undefined);
-}
+  get<T>(url: string) {
+    return this.request<T>("GET", url, undefined);
+  }
 
   post<T>(url: string, body?: unknown) {
     return this.request<T>("POST", url, body);
