@@ -12,7 +12,7 @@ export default async function  Login() {
          <div className="flex flex-col items-center gap-3 w-[430px] max-md:w-[80%] ">
 
 
-           <AuthPageHeader head="ورود به پیزا" />
+           <AuthPageHeader head="ورود به رویش" />
 
              <LoginHandler/>
              

@@ -14,8 +14,8 @@ const Yekan = localFont({
 
 
 export const metadata: Metadata = {
-  title: "auth",
-  description: "authentication",
+  title: "آکادمی رویش | یادگیری مهارت‌های کاربردی",
+  description: "دوره‌های آموزشی برنامه‌نویسی، طراحی، بازاریابی و کسب‌وکار",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
 
-    <html lang="en" suppressHydrationWarning style={{height:"full"}} className={Yekan.className} >
+    <html lang="fa" suppressHydrationWarning className={Yekan.className} >
      
       <body className="layout" >
 

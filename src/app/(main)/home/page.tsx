@@ -1,37 +1,11 @@
-import React from 'react'
-// import HeaderComponent from '../../components/common/Header/Header'
-// import FooterComponent from '@/components/common/Footer/Footer'
-import Rotbebartart from '@/components/landing/rotbebartar/rotbebartart'
-import HotSales from '@/components/landing/hotsales/HotSales'
-import BestLocation from '@/components/landing/BestLocation/BestLocation'
-import CategoryHouses from '@/components/landing/categoryhouses/CategoryHouses'
-import HeroSection from '@/components/landing/HeroSection/HeroSection'
-import UserComments from '@/components/landing/UserComments/UserComments'
-import DiscountedHouses from '@/components/landing/discountedHouses/DiscountedHouses'
-import PropertySearchTabs from '@/components/landing/fixedBar/FixedBard'
-import { Api } from '@/util/service/api'
-import { handleAsyncAction } from '@/util/service/api/handleAsync'
+import type { Metadata } from 'next';
+import Landing from '@/components/courses/Landing';
+import { getCategories, getCourses } from '@/util/service/course-platform/courses';
+import { CoursePlatformError } from '@/util/service/course-platform/client';
 
-const  LandingPage =async() => {
+export const metadata: Metadata = { title: 'رویش | از یادگیری تا ساختن آینده', description: 'دوره‌های کاربردی برنامه‌نویسی، طراحی، بازاریابی و کسب‌وکار. مهارت بعدی خود را در آکادمی رویش پیدا کنید.' };
 
-
-  const api = await Api();
-  const comments = await handleAsyncAction(api.landing.getComments());
-  const comment = comments?.data?.comments 
-
-  return (
-    <div dir='rtl' className='flex flex-col gap-20'>
-      {/* <PropertySearchTabs /> */}
-      <HeroSection />
-      <DiscountedHouses />
-      <CategoryHouses />
-      <HotSales />
-      <Rotbebartart />
-      <BestLocation />
-      <UserComments comment={comment} />
-      
-    </div>
-  )
+export default async function HomePage() {
+  const [list, categories] = await Promise.allSettled([getCourses({ limit: 3, page: 1 }), getCategories()]);
+  return <Landing courses={list.status === 'fulfilled' ? list.value.courses : []} categories={categories.status === 'fulfilled' ? categories.value : []} error={list.status === 'rejected' ? list.reason instanceof CoursePlatformError ? list.reason.message : 'دریافت دوره‌ها ممکن نشد.' : undefined} />;
 }
-
-export default LandingPage

@@ -6,7 +6,7 @@ import GoogleIco from "@/assets/ico/auth/google-ico.png"
 import Image from "next/image"
 
 interface titleProps {
-    title: "ثبت نام در پیزا با گوگل" | "ورود به حساب کاربری با گوگل"
+    title: "ثبت نام در رویش با گوگل" | "ورود به حساب کاربری با گوگل"
 }
 
 export default function SubmitBt ({title}:titleProps) {
