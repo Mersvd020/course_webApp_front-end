@@ -4,7 +4,7 @@ import { createContext, useContext, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "./AuthContext";
 import { readStorage, useStoredValue, writeStorage } from "@/lib/storage";
-import { Course, coursePrice } from "@/types/course";
+import { Course} from "@/types/course";
 
 interface LibraryState {
   cart: Course[];
@@ -24,8 +24,8 @@ function isLibrary(value: unknown): value is LibraryState {
           item &&
           typeof item.id === "string" &&
           typeof item.title === "string" &&
-          typeof item.instructor === "string" &&
-          typeof item.image === "string" &&
+          typeof item.teacherName === "string" &&
+          typeof item.courseCoverUrl === "string" &&
           typeof item.price === "number" &&
           Number.isFinite(item.price) &&
           item.price >= 0,
@@ -131,7 +131,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         checkingOut,
         checkout,
         add,
-        total: state.cart.reduce((sum, course) => sum + coursePrice(course), 0),
+        total: state.cart.reduce((sum, course) => sum + course.price, 0),
         remove: (id) =>
           update((current) => ({
             ...current,

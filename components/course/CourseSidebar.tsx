@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BookOpen, CheckCircle2, Heart, ShoppingBag } from "lucide-react";
-import { Course, coursePrice } from "@/types/course";
+import { Course} from "@/types/course";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
 import Button from "@/components/ui/Button";
@@ -13,7 +13,7 @@ export default function CourseSidebar({ course }: { course: Course }) {
   const owned = purchased.some((item) => item.id === course.id);
   const inCart = cart.some((item) => item.id === course.id);
   const favorite = wishlist.some((item) => item.id === course.id);
-  const price = coursePrice(course);
+  const price = course.price;
   return (
     <aside className="panel course-sidebar">
       <span className="section-kicker">سرمایه‌گذاری روی آینده خودت</span>

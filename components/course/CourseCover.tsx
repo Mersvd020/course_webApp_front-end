@@ -19,7 +19,7 @@ export default function CourseCover({
   return (
     <Image
       src={!failed && safe ? src : "/courses/default.svg"}
-      alt={title}
+      alt="wadwadaw"
       width={800}
       height={460}
       className="course-cover"

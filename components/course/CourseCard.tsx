@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpLeft, Clock3, Heart, Star, Users } from "lucide-react";
-import { Course, coursePrice } from "@/types/course";
+import { Course } from "@/types/course";
 import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import CourseCover from "./CourseCover";
@@ -10,13 +10,13 @@ import CourseCover from "./CourseCover";
 export default function CourseCard({ course }: { course: Course }) {
   const { wishlist, toggleWishlist } = useCart();
   const favorite = wishlist.some((item) => item.id === course.id);
-  const price = coursePrice(course);
+  const price = course.price;
   const discounted = price < course.price;
   return (
     <article className="course-card">
       <div className="course-image-wrap">
         <Link href={`/course/${course.id}`} tabIndex={-1} aria-hidden="true">
-          <CourseCover src={course.image} title="" />
+          <CourseCover src={course.courseCoverUrl} title="" />
         </Link>
         {discounted && (
           <span className="discount-badge">
@@ -37,19 +37,19 @@ export default function CourseCard({ course }: { course: Course }) {
       </div>
       <div className="course-card-body">
         <div className="course-meta">
-          <span>{course.category || "تخصصی"}</span>
-          {course.rating != null && (
+          <span>{"تخصصی"}</span>
+          {course.rateAvg != null && (
             <span className="rating">
               <Star size={14} fill="currentColor" />
-              {course.rating.toLocaleString("fa-IR")}
+              {course.rateAvg.toLocaleString("fa-IR")}
             </span>
           )}
         </div>
         <h3>
           <Link href={`/course/${course.id}`}>{course.title}</Link>
         </h3>
-        <p className="instructor">مدرس: {course.instructor}</p>
-        <div className="course-facts">
+        <p className="instructor">مدرس: {course.teacherName}</p>
+        {/* <div className="course-facts">
           <span>
             <Clock3 size={14} />
             {course.duration || "آموزش ویدیویی"}
@@ -60,7 +60,7 @@ export default function CourseCard({ course }: { course: Course }) {
               {course.students.toLocaleString("fa-IR")} دانشجو
             </span>
           )}
-        </div>
+        </div> */}
         <div className="course-card-bottom">
           <div>
             {discounted && <del>{formatPrice(course.price)}</del>}

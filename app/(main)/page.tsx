@@ -10,7 +10,10 @@ import {
 import HeroSection from "@/components/home/HeroSection";
 import HomeCourses from "@/components/home/HomeCourses";
 
+
+
 export default function HomePage() {
+
   return (
     <>
       <HeroSection />

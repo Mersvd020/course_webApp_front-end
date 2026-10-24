@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { coursePrice } from "@/types/course";
+// import { coursePrice } from "@/types/course";
 import { formatPrice } from "@/lib/utils";
 import CourseCover from "@/components/course/CourseCover";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
+import {buyWithGateway} from "@/services/course.service";
 
 export default function CartPage() {
   const { cart, total, remove, checkout, checkingOut } = useCart();
@@ -36,14 +37,14 @@ export default function CartPage() {
             {cart.map((course) => (
               <article className="panel cart-item" key={course.id}>
                 <Link href={`/course/${course.id}`} className="cart-cover">
-                  <CourseCover src={course.image} title={course.title} />
+                  <CourseCover src={course.courseCoverUrl} title={course.title} />
                 </Link>
                 <div>
                   <h2>
                     <Link href={`/course/${course.id}`}>{course.title}</Link>
                   </h2>
-                  <p>{course.instructor}</p>
-                  <strong>{formatPrice(coursePrice(course))}</strong>
+                  <p>{course.teacherName}</p>
+                  <strong>{formatPrice(course.price)}</strong>
                 </div>
                 <button
                   className="icon-button remove-button"
@@ -78,15 +79,29 @@ export default function CartPage() {
                 <dd>{formatPrice(total)}</dd>
               </div>
             </dl>
+
             <Button
               loading={checkingOut}
               onClick={async () => {
-                if (await checkout()) router.push("/user/courses");
-              }}
+                 try {
+                  //  setCheckingOut(true);
+                   const url = await buyWithGateway("031e27cc-e6fa-47ef-8f94-12dbe3cdccce");
+                   if (url) {
+                     window.location.href = url; // رفتن به درگاه sandbox
+                   } else {
+                    //  toast.error("لینک پرداخت دریافت نشد");
+                   }
+                 } catch (e) {
+                  //  toast.error("خطا در اتصال به درگاه");
+                 } finally {
+                  //  setCheckingOut(false);
+                 }
+               }}
             >
               {checkingOut ? "در حال ثبت خرید…" : "تکمیل خرید آزمایشی"}
               {!checkingOut && <ArrowLeft size={18} />}
             </Button>
+
             <p className="demo-note">
               این پرداخت شبیه‌سازی‌شده است؛ مبلغی از شما دریافت نمی‌شود.
             </p>

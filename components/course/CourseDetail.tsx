@@ -31,6 +31,8 @@ export default function CourseDetail({ id }: { id: string }) {
       active = false;
     };
   }, [id, attempt]);
+
+
   if (error)
     return (
       <div className="container page-space">
@@ -59,7 +61,10 @@ export default function CourseDetail({ id }: { id: string }) {
         />
       </div>
     );
+
+
   const course = result.data;
+  console.log("course",course);
   return (
     <div className="container page-space">
       <nav className="breadcrumbs" aria-label="مسیر صفحه">
@@ -67,7 +72,7 @@ export default function CourseDetail({ id }: { id: string }) {
         <span>/</span>
         <Link href="/course">دوره‌ها</Link>
         <span>/</span>
-        <span>{course.category || "دوره تخصصی"}</span>
+        <span>{"دوره تخصصی"}</span>
       </nav>
       {result.source === "mock" && (
         <p className="demo-note">
@@ -77,38 +82,38 @@ export default function CourseDetail({ id }: { id: string }) {
       <div className="detail-grid">
         <div>
           <div className="detail-heading">
-            <span className="eyebrow">
+            {/* <span className="eyebrow">
               {course.category} · {course.level || "آموزش تخصصی"}
-            </span>
+            </span> */}
             <h1>{course.title}</h1>
             <p>{course.description}</p>
             <div className="detail-facts">
               <span>
                 <GraduationCap size={19} />
-                {course.instructor}
+                {course.teacherName}
               </span>
-              {course.duration && (
+              {/* {course.duration && (
                 <span>
                   <Clock3 size={18} />
                   {course.duration}
                 </span>
-              )}
-              {course.students != null && (
+              )} */}
+              {/* {course.students != null && (
                 <span>
                   <Users size={18} />
                   {course.students.toLocaleString("fa-IR")} دانشجو
                 </span>
-              )}
-              {course.rating != null && (
+              )} */}
+              {course.rateAvg != null && (
                 <span>
                   <Star size={17} />
-                  {course.rating.toLocaleString("fa-IR")}
+                  {course.rateAvg.toLocaleString("fa-IR")}
                 </span>
               )}
             </div>
           </div>
           <div className="detail-cover">
-            <CourseCover src={course.image} title={course.title} priority />
+            <CourseCover  src={course.courseCoverUrl} title={course.title} priority />
           </div>
           <section className="panel detail-section">
             <h2>درباره این دوره</h2>
@@ -116,7 +121,7 @@ export default function CourseDetail({ id }: { id: string }) {
           </section>
           <section className="panel detail-section">
             <h2>سرفصل‌های دوره</h2>
-            <LessonAccordion topics={course.topics ?? []} />
+            {/* <LessonAccordion topics={course.topics ?? []} /> */}
           </section>
         </div>
         <CourseSidebar course={course} />

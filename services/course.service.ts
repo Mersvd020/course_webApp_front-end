@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-
+import axios from "axios";
 import { mockCourses } from "@/lib/mock-courses";
 import type { Course, CourseResult, Topic } from "@/types/course";
 import { number, record, text, unwrap } from "./response";
@@ -67,62 +67,95 @@ export async function getCourses(): Promise<CourseResult<Course[]>> {
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true")
     return { data: mockCourses, source: "mock" };
   try {
-    const response = await api.get("/course/getAllCourseWithPagination", {
-      ...requestOptions,
-      params: {
-        search: "",
-        limit: 100,
-        page: 1,
-        sortType: "null",
-        order: "asc",
-        minPrice: "null",
-        maxPrice: "null",
-      },
-    });
-    const data = unwrap(response.data);
-    const items = Array.isArray(data)
-      ? data
-      : (record(data).courses ?? record(data).items ?? record(data).data);
-    const courses = Array.isArray(items)
-      ? items
-          .map(normalizeCourse)
-          .filter((course): course is Course => course !== null)
-      : [];
-    if (courses.length) return { data: courses, source: "api" };
+    const response = await axios.get("/api/backend/course/getAllCourseWithPagination")
+    // {
+      // ...requestOptions,
+      // params: {
+      //   search: "",
+      //   limit: 100,
+      //   page: 1,
+      //   sortType: "null",
+      //   order: "asc",
+      //   minPrice: "null",
+      //   maxPrice: "null",
+      // },
+    // });
+    const data = response.data.data.data;
+    // const data = unwrap(response.data);
+    // const items = Array.isArray(data)
+    //   ? data
+    //   : (record(data).courses ?? record(data).items ?? record(data).data);
+    // const courses = Array.isArray(items)
+    //   ? items
+    //       .map(normalizeCourse)
+    //       .filter((course): course is Course => course !== null)
+    //   : [];
+    if (data.length) return { data: data, source: "api" };
   } catch {
     // An unavailable or empty catalog intentionally falls back to the demo catalog.
   }
   return { data: mockCourses, source: "mock" };
 }
 
+// export async function getCoursesP():Promise<any>{
+//   try{
+//       const response = await axios.get("api/backend/course/getAllCourseWithPagination");
+
+//        console.log("responsesssssssss",response.data.data);
+
+//      return {data:response.data.data.data ,source:"api"}
+
+//    }catch(error){
+//     console.log("error",error);
+//    }
+// }
+
 export async function getCourse(
   id: string,
 ): Promise<CourseResult<Course | null>> {
+
   const mock = mockCourses.find((course) => course.id === id);
   if (mock) return { data: mock, source: "mock" };
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true")
     return { data: null, source: "mock" };
+
   try {
-    const response = await api.get(
-      `/course/${encodeURIComponent(id)}`,
-      requestOptions,
-    );
-    const data = unwrap(response.data);
-    const course = normalizeCourse(record(data).course ?? data);
-    if (!course) return { data: null, source: "api" };
-    try {
-      const topics = await api.get(
-        `/course/${encodeURIComponent(id)}/topics`,
-        requestOptions,
-      );
-      course.topics = normalizeTopics(topics.data);
-    } catch {
-      course.topics = [];
-    }
+    console.log(id);
+     const response = await axios.get(`/api/backend/course/${id}`)
+    // const response = await api.get(
+    //   `/course/${encodeURIComponent(id)}`,
+    //   requestOptions,
+    // );
+    // const data = unwrap(response.data);
+    // const course = normalizeCourse(record(data).course ?? data);
+    // if (!course) return { data: null, source: "api" };
+    // try {
+    //   const topics = await api.get(
+    //     `/course/${encodeURIComponent(id)}/topics`,
+    //     requestOptions,
+    //   );
+    //   course.topics = normalizeTopics(topics.data);
+    // } catch {
+    //   course.topics = [];
+    // }
+    // console.log(response.data);
+    const course = response.data.data.course;
     return { data: course, source: "api" };
   } catch (error) {
-    if (record(record(error).response).status === 404)
-      return { data: null, source: "api" };
+    // if (record(record(error).response).status === 404)
+    //   return { data: null, source: "api" };
     throw new Error("دریافت دوره امکان‌پذیر نیست. دوباره تلاش کنید.");
   }
+}
+
+
+export async function buyWithGateway (id:string):Promise<any>{
+
+  const response = await api.post("/wallet/payment/gateway", {
+    itemId:id,
+    itemType: "Course",
+  });
+
+  return response.data?.data?.paymentUrl;
+
 }

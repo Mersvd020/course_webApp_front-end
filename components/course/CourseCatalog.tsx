@@ -6,7 +6,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useCourses } from "./useCourses";
 import CourseCard from "./CourseCard";
 import CourseLoading from "./CourseLoading";
-import { coursePrice } from "@/types/course";
+// import { coursePrice } from "@/types/course";
 import EmptyState from "@/components/ui/EmptyState";
 
 export default function CourseCatalog() {
@@ -41,20 +41,20 @@ function CatalogFilters({
     ...new Set(result.data.map((course) => course.category).filter(Boolean)),
   ];
   const courses = result.data
-    .filter(
-      (course) =>
-        (!category || course.category === category) &&
-        (!discounted || coursePrice(course) < course.price) &&
-        `${course.title} ${course.instructor}`
-          .toLocaleLowerCase("fa")
-          .includes(search.trim().toLocaleLowerCase("fa")),
-    )
-    .sort((a, b) => {
-      if (sort === "price-asc") return coursePrice(a) - coursePrice(b);
-      if (sort === "price-desc") return coursePrice(b) - coursePrice(a);
-      if (sort === "views") return (b.views ?? 0) - (a.views ?? 0);
-      return (b.students ?? 0) - (a.students ?? 0);
-    });
+    // .filter(
+    //   (course) =>
+    //     (!category || course.category === category) &&
+    //     (!discounted || coursePrice(course) < course.price) &&
+    //     `${course.title} ${course.instructor}`
+    //       .toLocaleLowerCase("fa")
+    //       .includes(search.trim().toLocaleLowerCase("fa")),
+    // )
+    // .sort((a, b) => {
+    //   if (sort === "price-asc") return coursePrice(a) - coursePrice(b);
+    //   if (sort === "price-desc") return coursePrice(b) - coursePrice(a);
+    //   if (sort === "views") return (b.views ?? 0) - (a.views ?? 0);
+    //   return (b.students ?? 0) - (a.students ?? 0);
+    // });
 
   return (
     <div className="container page-space">
@@ -98,7 +98,7 @@ function CatalogFilters({
           >
             همه دوره‌ها
           </button>
-          {categories.map((item) => (
+          {/* {categories.map((item) => (
             <button
               className={category === item ? "active" : ""}
               key={item}
@@ -106,7 +106,7 @@ function CatalogFilters({
             >
               {item}
             </button>
-          ))}
+          ))} */}
         </div>
         <label className="checkbox-label">
           <input
