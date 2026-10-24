@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/*.test.cjs",
+    "test:smoke": "node tests/smoke.cjs",
+    "test:proxy": "node tests/proxy-smoke.cjs",
+    "format": "prettier --write app components context services types lib/mock-courses.ts lib/storage.ts lib/auth-validation.ts tests README.md"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -28,6 +32,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "happy-dom": "^21.0.4",
+    "prettier": "^3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

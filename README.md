@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# دانا — سامانه آموزش و فروش دوره
 
-## Getting Started
+پیاده‌سازی `prompt.md` با Next.js App Router، TypeScript، Tailwind، React Hook Form و Zod. رابط فارسی، راست‌چین و واکنش‌گراست. کاورهای SVG داخل پروژه قرار دارند و نمایش دوره‌های نمونه به سرویس تصویر یا فونت خارجی وابسته نیست.
 
-First, run the development server:
+## اجرا
 
-```bash
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+آدرس پیش‌فرض فرانت‌اند `http://localhost:3000` است. بک‌اند مطابق `api.md` روی پورت `3001` تنظیم می‌شود. در صورت اشغال پورت فرانت‌اند:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run dev -- --port 3002
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+مقادیر زیر را در `.env.local` قرار دهید؛ فایل موجود را با اطلاعات شخصی خود حفظ کنید. نمونه تنظیمات در `.env.example` موجود است:
 
-## Learn More
+```dotenv
+API_URL=http://localhost:3001
+NEXT_PUBLIC_USE_MOCK_DATA=false
+```
 
-To learn more about Next.js, take a look at the following resources:
+برای نمایش مستقیم داده‌های نمونه، `NEXT_PUBLIC_USE_MOCK_DATA=true` تنظیم شود. تغییر متغیرهای محیطی به راه‌اندازی مجدد سرور توسعه یا ساخت مجدد نسخه production نیاز دارد.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+مرورگر درخواست‌های API را به مسیر هم‌مبدأ `/api/backend` می‌فرستد و Next.js با `rewrites` آن‌ها را به بک‌اند ارسال می‌کند؛ بنابراین این درخواست‌ها در مرورگر مستقیماً بین دو مبدأ جابه‌جا نمی‌شوند و به CORS بک‌اند وابسته نیستند. برای نمونه، `/api/backend/user/login` به `http://localhost:3001/user/login` فرستاده می‌شود. متد، بدنه، پارامترهای جستجو و هدرهای احراز هویت حفظ می‌شوند.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+متغیر `API_URL` آدرس سروری بک‌اند است و باید از محل اجرای Next.js قابل دسترس باشد. برای سازگاری، اگر این متغیر تنظیم نشده باشد، مقدار قبلی `NEXT_PUBLIC_API_URL` خوانده می‌شود؛ سپس مقدار پیش‌فرض `http://localhost:3001` استفاده می‌شود. تغییرات مربوط به پراکسی نیازمند restart در توسعه و build مجدد در production هستند. بک‌اند همچنان باید روشن باشد؛ خطاهای اتصال یا `401` با تغییر مسیر پراکسی برطرف نمی‌شوند.
 
-## Deploy on Vercel
+## امکانات و مسیرها
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| مسیر                    | کاربرد                                                         |
+| ----------------------- | -------------------------------------------------------------- |
+| `/`                     | معرفی، دسته‌بندی‌ها و اسلایدر محبوب‌ترین، تخفیف‌دار و پربازدید |
+| `/course`               | جستجو بر اساس عنوان/مدرس، دسته‌بندی، تخفیف و مرتب‌سازی         |
+| `/course/[id]`          | کاور، مشخصات، قیمت، سرفصل‌ها، سبد خرید و علاقه‌مندی            |
+| `/cart`                 | حذف دوره، جمع مبلغ، تخفیف و خرید آزمایشی                       |
+| `/user/login`           | ورود با API و ذخیره توکن                                       |
+| `/user/register`        | ثبت‌نام با ایمیل، موبایل و رمز عبور                            |
+| `/user/forget-password` | ارسال کد و سپس ثبت رمز جدید                                    |
+| `/user/reset-password`  | ورود مستقیم به فرم کد و رمز جدید                               |
+| `/user/courses`         | خریدهای آزمایشی ذخیره‌شده                                      |
+| `/user/wishlist`        | دوره‌های نشان‌شده                                              |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+مسیرهای قدیمی `/login`، `/register` و `/forget-password` به مسیرهای متناظر زیر `/user` هدایت می‌شوند.
+
+## داده‌ها و اتصال به API
+
+- درخواست فهرست به `/course/getAllCourseWithPagination` ارسال می‌شود؛ در حال حاضر حداکثر ۱۰۰ دوره از صفحه اول دریافت و جستجو/مرتب‌سازی در کلاینت انجام می‌شود.
+- اگر API در دسترس نباشد، پاسخ معتبر ندهد یا فهرست خالی باشد، شش دوره نمونه از `lib/mock-courses.ts` جایگزین می‌شوند. نتیجه سرویس دارای `source: "api" | "mock"` است و حالت نمایشی در رابط مشخص می‌شود.
+- جزئیات دوره‌های نمونه بدون بک‌اند قابل استفاده است. خطای دریافت دوره واقعی از «دوره موجود نیست» تفکیک شده و دکمه تلاش مجدد دارد. نبود سرفصل‌ها مانع نمایش مشخصات دوره نیست.
+- چون `api.md` فقط cURL درخواست‌ها را دارد و نمونه پاسخ ندارد، تبدیل پاسخ در `services/course.service.ts` متمرکز شده است. آرایه مستقیم یا پوشش `data`/`result` و فهرست‌های `courses`/`items`/`data` پشتیبانی می‌شوند. برای نام‌گذاری متفاوت فیلدهای بک‌اند، همین تبدیل باید تطبیق داده شود.
+- فیلدهای حداقلی دوره عبارت‌اند از `id`، `title` و `price`؛ نام‌های جایگزین متداول مانند `courseId`، `name`، `imageUrl` و `teacher.name` هم پشتیبانی می‌شوند. تخفیف، امتیاز، بازدید و تعداد دانشجو اختیاری هستند.
+- ورود، ثبت‌نام و بازیابی رمز واقعی هستند و برای موفقیت به بک‌اند نیاز دارند؛ حالت Mock هیچ ورود ساختگی تولید نمی‌کند. ورود `accessToken` یا `token` را از پاسخ می‌خواند و `x-device-id` پایدار می‌فرستد.
+- در بازیابی رمز، اگر مرحله اول توکن موقت بدهد، فقط در حافظه فرم نگهداری و برای مرحله دوم ارسال می‌شود. بازکردن مستقیم فرم reset به قرارداد بک‌اند درباره نیاز به توکن بستگی دارد.
+- درخواست‌های API از پراکسی هم‌مبدأ Next.js عبور می‌کنند. هیچ توکن یا اطلاعات نمونه خصوصی موجود در `api.md` در برنامه استفاده نشده است.
+
+## رفتار خرید آزمایشی و ذخیره‌سازی
+
+خرید با تأخیر ۱٫۵ ثانیه شبیه‌سازی می‌شود؛ هیچ درگاه پرداختی فراخوانی و هیچ مبلغی دریافت نمی‌شود. بعد از ثبت موفق در LocalStorage، دوره‌ها به کتابخانه اضافه و از سبد حذف می‌شوند. ارسال دوباره خرید و افزودن دوره تکراری یا قبلاً خریداری‌شده مسدود است. در صورت خطای ذخیره‌سازی، سبد حفظ می‌شود.
+
+سبد، خریدها و علاقه‌مندی‌ها در `course-library:<userId>` ذخیره می‌شوند. شناسه حساب از ایمیل استانداردشده ورود ساخته می‌شود. اطلاعات مهمان در `course-library:guest` جداست؛ با ورود به حساب منتقل نمی‌شود و با خروج دوباره در دسترس است. این داده‌ها بین دستگاه‌ها همگام نمی‌شوند و حذف داده‌های مرورگر آن‌ها را پاک می‌کند. تغییرات تب‌های یک مرورگر همگام می‌شوند.
+
+توکن طبق خواسته پروژه در کلید `token` و اطلاعات نشست در `course-session` ذخیره می‌شوند. این کتابخانه محلی مجوز دسترسی واقعی به محتوا نیست؛ پخش ویدیو و اعتبارسنجی خرید سمت سرور در دامنه این نسخه قرار ندارند.
+
+## ساختار
+
+- `types/`: قراردادهای دوره و احراز هویت
+- `services/`: دریافت و تبدیل پاسخ API
+- `context/`: وضعیت احراز هویت، سبد و کتابخانه
+- `components/`: اجزای مشترک، فرم‌ها، اسلایدر و صفحات کلاینتی
+- `lib/`: داده نمونه، اعتبارسنجی فرم و ذخیره‌سازی
+- `app/(main)/` و `app/(auth)/`: مسیرهای App Router
+- `public/courses/`: کاورهای محلی
+- `tests/`: تست‌های سرویس و یکپارچگی Contextها با DOM شبیه‌سازی‌شده
+
+## بررسی و ساخت
+
+```sh
+npm run lint
+npm test
+npm run build
+npm start
+```
+
+با سرور روشن، `npm run test:smoke -- http://localhost:3000` پاسخ مسیرها، راست‌چین بودن سند، تغییرمسیرهای قدیمی و سرو فایل کاور را بررسی می‌کند.
+
+`npm run test:proxy` یک بک‌اند آزمایشی محلی و سرور موقت Next.js اجرا می‌کند، ارسال بدنه و هدرهای ورود، پارامترهای فهرست و انتقال خطای `401` را بررسی کرده و هر دو سرور آزمایشی را متوقف می‌کند. این تست به بک‌اند واقعی درخواست نمی‌فرستد.
+
+`npm run format` کدهای پیاده‌سازی را با Prettier مرتب می‌کند. تست‌ها هیچ درخواست ثبت‌نام یا پرداخت واقعی ارسال نمی‌کنند؛ پاسخ API کنترل‌شده است و رفتار واقعی Contextهای React با Happy DOM بررسی می‌شود.
+
+برای بررسی دستی، دوره `/course/mock-react` را به سبد اضافه کنید، خرید آزمایشی را انجام دهید و ماندگاری آن را بعد از بارگذاری مجدد `/user/courses` ببینید. جستجو، فیلترها، قلب علاقه‌مندی، اسلایدرهای RTL و منوی موبایل را در عرض‌های مختلف بررسی کنید. آزمون ورود موفق و ارسال ایمیل بازیابی نیازمند بک‌اند و حساب آزمایشی است.

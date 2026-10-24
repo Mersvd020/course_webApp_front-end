@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ,
+  // Keep browser requests on the frontend origin; Next.js forwards them upstream.
+  baseURL: "/api/backend",
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,7 +11,7 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("token");
-    if (token) {
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
